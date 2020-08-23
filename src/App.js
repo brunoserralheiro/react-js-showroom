@@ -2,27 +2,35 @@ import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 import CollectionList from "./app/components/CollectionList";
 const { v4: uuidv4 } = require("uuid");
-const LOCAL_STORAGE_KEY = "collections_key"
+const LOCAL_STORAGE_KEY = "collectionsList_key";
 function App() {
-  const [collections, setCollection] = useState([]);
-  const [newCollectionName, setNewCollectionName] = useState(localStorage.getItem(Object.keys(LOCAL_STORAGE_KEY)));
+  const [collectionsList, setCollections] = useState([]);
+  const [newCollectionName, setNewCollectionName] = useState(
+    JSON.parse(localStorage.getItem(Object.keys(LOCAL_STORAGE_KEY)))
+  );
   const collectionNameRef = useRef(null);
 
   useEffect(() => {
-    const storedCollections = JSON.parse (localStorage.getItem(Object.keys(LOCAL_STORAGE_KEY)));
-     if (storedCollections) setCollection(storedCollections);
+    const storedCollectionsList = JSON.parse(
+      localStorage.getItem(Object.keys(LOCAL_STORAGE_KEY))
+    );
+    if (storedCollectionsList) setCollections(storedCollectionsList);
     return () => {
       // cleanup
-    }
-  }, [])
+      console.log(
+        "storedCollectionsList: \n %s",
+        JSON.stringify(localStorage.getItem(Object.keys(LOCAL_STORAGE_KEY)))
+      );
+    };
+  }, []);
 
-   useEffect(() => {
+  useEffect(() => {
     // effect
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(collections));
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(collectionsList));
     return () => {
       // cleanup
-    }
-  }, [collections]);
+    };
+  }, [collectionsList]);
 
   const addCollection = (event) => {
     if (newCollectionName === "") return;
@@ -33,17 +41,28 @@ function App() {
     };
     event.preventDefault();
     console.log("newCollectionName: " + newCollectionName);
-    setCollection([...collections, newCollection]);
+    setCollections([...collectionsList, newCollection]);
     newCollection = null;
     setNewCollectionName("");
   };
 
+  function toggleCollection(id) {
+    const newCollectionsList = [...collectionsList];
+    const collection = newCollectionsList.find((col) => col.id === id);
+    collection.active = !collection.active;
+    setCollections(newCollectionsList);
+  }
 
-  console.log("All Collections after update: " + JSON.stringify(collections));
+  console.log(
+    "All CollectionsList after update: " + JSON.stringify(collectionsList)
+  );
   return (
     <>
       <div className="container">
-        <CollectionList collectionList={collections} />
+        <CollectionList
+          collectionList={collectionsList}
+          toggleCollection={toggleCollection}
+        />
         <input
           type="text"
           name="add_name"
@@ -54,7 +73,7 @@ function App() {
         />
         <button onClick={addCollection}>Add </button>
         <button>Clear</button>
-        <div>{collections.length} Collections</div>
+        <div>Total: {collectionsList.length} Collections found in the List</div>
       </div>
     </>
   );

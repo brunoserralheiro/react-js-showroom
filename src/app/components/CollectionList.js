@@ -1,7 +1,7 @@
 import React from "react";
 import Collection from "./Collection";
 
-export default function CollectionList({ collectionList }) {
+export default function CollectionList({ collectionList, toggleCollection }) {
   return collectionList.map((collection) => {
     return (
       // using list to display a bullet for allcollections, active and inactive,
@@ -14,6 +14,7 @@ export default function CollectionList({ collectionList }) {
               <Collection
                 key={collection.name}
                 collection={collection}
+                toggleCollection={toggleCollection}
               ></Collection>
             ) : null}
           </div>
