@@ -1,61 +1,61 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 import CollectionList from "./app/components/CollectionList";
-
+const { v4: uuidv4 } = require("uuid");
+const LOCAL_STORAGE_KEY = "collections_key"
 function App() {
-  const collection1 = { id: 1, name: "col1", active: true };
-  const collection2 = { id: 2, name: "col2", active: true };
-  const collection3 = { id: 3, name: "col3", active: false };
-  const collection4 = { id: 4, name: "col4", active: false };
-  const defaultCollections = [
-    collection1,
-    collection2,
-    collection3,
-    collection4,
-  ];
   const [collections, setCollection] = useState([]);
-  const [newCollectionName, setNewCollectionName] = useState("");
+  const [newCollectionName, setNewCollectionName] = useState(localStorage.getItem(Object.keys(LOCAL_STORAGE_KEY)));
+  const collectionNameRef = useRef(null);
+
+  useEffect(() => {
+    const storedCollections = JSON.parse (localStorage.getItem(Object.keys(LOCAL_STORAGE_KEY)));
+     if (storedCollections) setCollection(storedCollections);
+    return () => {
+      // cleanup
+    }
+  }, [])
+
+   useEffect(() => {
+    // effect
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(collections));
+    return () => {
+      // cleanup
+    }
+  }, [collections]);
 
   const addCollection = (event) => {
+    if (newCollectionName === "") return;
     let newCollection = {
-      id: collections.length + 1,
+      id: uuidv4(),
       name: newCollectionName,
       active: true,
     };
-    console.log(
-      "Add Collection callback,  new ID = %s",
-      collections.length + 1
-    );
     event.preventDefault();
-
     console.log("newCollectionName: " + newCollectionName);
-
-    console.log(
-      "newCollection before update: " + JSON.stringify(newCollection)
-    );
     setCollection([...collections, newCollection]);
     newCollection = null;
-
-    console.log(" Collections : " + JSON.stringify(collections));
-
     setNewCollectionName("");
   };
-  console.log(" Collections after : " + JSON.stringify(collections));
+
+
+  console.log("All Collections after update: " + JSON.stringify(collections));
   return (
     <>
-      <CollectionList collectionList={collections} />
-      <form onSubmit={addCollection}>
+      <div className="container">
+        <CollectionList collectionList={collections} />
         <input
           type="text"
           name="add_name"
+          ref={collectionNameRef}
           value={newCollectionName}
           placeholder="Collection name"
           onChange={(e) => setNewCollectionName(e.target.value)}
         />
-        <button type="submit">Add </button>
+        <button onClick={addCollection}>Add </button>
         <button>Clear</button>
         <div>{collections.length} Collections</div>
-      </form>
+      </div>
     </>
   );
 }
