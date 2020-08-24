@@ -22,7 +22,7 @@ function App() {
         JSON.stringify(localStorage.getItem(Object.keys(LOCAL_STORAGE_KEY)))
       );
     };
-  }, []);
+  }, [collectionsList]);
 
   useEffect(() => {
     // effect
@@ -53,6 +53,12 @@ function App() {
     setCollections(newCollectionsList);
   }
 
+  function showInactive() {
+    const newCollectionsList = [...collectionsList];
+    const inactiveCollections = newCollectionsList.filter((col) => !col.active);
+    setCollections(inactiveCollections);
+  }
+
   console.log(
     "All CollectionsList after update: " + JSON.stringify(collectionsList)
   );
@@ -72,8 +78,11 @@ function App() {
           onChange={(e) => setNewCollectionName(e.target.value)}
         />
         <button onClick={addCollection}>Add </button>
-        <button>Clear</button>
-        <div>Total: {collectionsList.length} Collections found in the List</div>
+        <button onClick={showInactive}>Show Inactive Collections</button>
+        <div>
+          Total: {collectionsList.filter((col) => !col.active).length} Innactive
+          Collections found in the List
+        </div>
       </div>
     </>
   );

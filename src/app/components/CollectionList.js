@@ -10,13 +10,11 @@ export default function CollectionList({ collectionList, toggleCollection }) {
       <>
         <div className="container-fluid">
           <div className="row">
-            {collection.active ? (
-              <Collection
-                key={collection.name}
-                collection={collection}
-                toggleCollection={toggleCollection}
-              ></Collection>
-            ) : null}
+            <Collection
+              key={collection.name}
+              collection={collection}
+              toggleCollection={toggleCollection}
+            ></Collection>
           </div>
         </div>
       </>

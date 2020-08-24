@@ -11,7 +11,8 @@ export default function Collection({ collection, toggleCollection }) {
                  return (
                    <>
                      <div>
-                       <div>
+                       <div >
+                       <div className="collumn">
                          <div className="checkbox">
                            <label>
                              <input
@@ -21,17 +22,14 @@ export default function Collection({ collection, toggleCollection }) {
                                onChange={toggleCheck}
                                readOnly={false}
                              />
-                             <div
-                               style={{
-                                 display: collection.active ? "block" : "none",
-                               }}
-                             >
+                             <div>
                                {collection.id}
                                <p />
-                               <p />
+                               
                              </div>
                              {collection.name}
                            </label>
+                         </div>
                          </div>
                          <p />
                        </div>
